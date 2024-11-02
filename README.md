@@ -58,13 +58,33 @@ In the following, we have different sections of the code.
 ### Key Components
 * CommonSetup Class: Connects to all devices in the testbed before running the test cases.
     *  The connect_to_devices method attempts to connect to each device and logs the connection status.
+    * Connects to all devices defined in the testbed YAML file.
+    * Stores the connected devices in self.parent.parameters['devices'].
+    * Logs a message upon a successful connection.
+    * Fails the script if it cannot connect to a device.
 
 * VLANVerificationTestcase Class: Contains the setup, test, and cleanup methods for verifying VLAN configurations.
     * Setup: Connects to a specific device (leaf1) and loads VLAN information.
+        * Attempts to get a specific device (leaf1) from the testbed.
+        * If the device is not found, it fails the setup.
+        * Runs the show vlan command to get VLAN data and parses the output.
+        * If parsing fails, the setup is marked as failed.
+    
     * Test (verify_vlans): Verifies if all the expected VLANs are present on the device. If any VLANs are missing, the test fails.
+        * Verifies that all expected VLANs (EXPECTED_VLANS) are present in the device's VLAN configuration.
+        * Converts VLAN IDs from the parsed output to integers and stores them in vlan_list.
+        * If any expected VLAN is missing, it adds it to missing_vlans.
+        * Uses an assert statement to raise an error if there are any missing VLANs.
+
     * Cleanup: Disconnects from the device after verification.
+        * Disconnects from leaf1.
+        * Logs a message to confirm disconnection.
+        * Logs a warning if disconnection fails.
 
 * CommonCleanup Class: Disconnects from all devices connected during the test.
+    * Disconnects from all devices connected during CommonSetup.
+    * Logs a message to indicate that each device has been disconnected.
+    * Logs a warning if it cannot disconnect from a device.
 
 ### Command-Line Arguments
 * You can provide the list of VLANs to verify as command-line arguments.
