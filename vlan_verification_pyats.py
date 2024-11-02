@@ -34,9 +34,9 @@ class VLANVerificationTestcase(aetest.Testcase):
     @aetest.setup
     def setup(self, testbed):
         """Connect to the device and load VLAN information"""
-        self.device = testbed.devices.get("sic_leaf1")
+        self.device = testbed.devices.get("leaf1")
         if not self.device:
-            self.failed("Device 'sic_leaf1' not found in the testbed.")
+            self.failed("Device 'leaf1' not found in the testbed.")
         try:
             # Use the generic 'show vlan' command instead of 'show vlan brief'
             self.vlan_data = self.device.parse("show vlan")
