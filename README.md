@@ -1,3 +1,7 @@
+[![published](https://static.production.devnetcloud.com/codeexchange/assets/images/devnet-published.svg)](https://developer.cisco.com/codeexchange/github/repo/emomeni/pyats_vlan_verification)
+
+[![Run in Cisco Cloud IDE](https://static.production.devnetcloud.com/codeexchange/assets/images/devnet-runable-icon.svg)](https://developer.cisco.com/codeexchange/devenv/emomeni/pyats_vlan_verification/)
+
 # VLAN Verification Test with PyATS
 
 ## Overview
