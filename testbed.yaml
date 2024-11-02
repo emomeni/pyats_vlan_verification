@@ -1,6 +1,6 @@
 ---
 devices:
-  sic_leaf1:
+  leaf1:
     os: nxos
     platform: nxos
     type: switch

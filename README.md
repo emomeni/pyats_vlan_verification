@@ -1,7 +1,7 @@
 # VLAN Verification Test with PyATS
 
 ## Overview
-This script is used to verify VLAN configurations on network devices using the Cisco PyATS and Genie framework. It connects to network devices defined in a testbed file, retrieves VLAN information, and ensures that the expected VLANs are configured correctly.
+This script is used to verify VLAN configurations on Cisco NX-OS Switches using the Cisco PyATS and Genie framework. It connects to network devices defined in a testbed file, retrieves VLAN information, and ensures that the expected VLANs are configured correctly.
 
 The script contains setup, test, and cleanup sections to automate the process of verifying VLAN configurations, making it efficient and reliable for network validation.
 
@@ -12,42 +12,42 @@ The script contains setup, test, and cleanup sections to automate the process of
 - Proper access to the devices defined in the testbed.
 
 ## Installation (required)
-
 To install the necessary Python libraries, run:
-```sh
+
+```bash
 pip install pyats genie
 ```
 
-## **Steps to Clone:**
-Clone the repo
+## Steps to Clone:
+1. **Clone the repo**
 ```bash
 git clone https://github.com/emomeni/pyats_vlan_verification.git
 ```
 
-Go to your project folder
+2. **Go to your project directory**
 ```bash
 cd pyats_vlan_verification
 ```
 
-Set up a Python venv
+3. **Set up a Python virtual environment**
 First make sure that you have Python 3 installed on your machine. We will then be using venv to create an isolated environment with only the necessary packages.
 
-Install virtualenv via pip
+3.1. **Install virtualenv via pip**
 ```bash
 pip install virtualenv
 ```
 
-Create the venv
+3.2. **Create the venv**
 ```bash
 python3 -m venv venv
 ```
 
-Activate your venv
+3.3. **Activate your venv**
 ```bash
 source venv/bin/activate
 ```
 
-Install dependencies
+4. **Install dependencies**
 ```bash
 pip install -r requirements.txt
 ```
@@ -60,7 +60,7 @@ In the following, we have different sections of the code.
     *  The connect_to_devices method attempts to connect to each device and logs the connection status.
 
 * VLANVerificationTestcase Class: Contains the setup, test, and cleanup methods for verifying VLAN configurations.
-    * Setup: Connects to a specific device (sic_leaf1) and loads VLAN information.
+    * Setup: Connects to a specific device (leaf1) and loads VLAN information.
     * Test (verify_vlans): Verifies if all the expected VLANs are present on the device. If any VLANs are missing, the test fails.
     * Cleanup: Disconnects from the device after verification.
 
