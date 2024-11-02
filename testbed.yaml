@@ -1,0 +1,15 @@
+---
+devices:
+  sic_leaf1:
+    os: nxos
+    platform: nxos
+    type: switch
+    connections:
+      cli:
+        protocol: ssh
+        ip: 192.168.10.2
+        port: 22
+    credentials:
+      default:
+        username: admin
+        password: admin

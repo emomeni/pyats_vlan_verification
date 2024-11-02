@@ -1,0 +1,4 @@
+genie==21.9
+pyats==21.9
+unicon==21.3
+logging==0.5.1.2
