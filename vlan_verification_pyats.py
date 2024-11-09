@@ -9,79 +9,75 @@ from pyats.log.utils import banner
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Define VLANs to be checked
-EXPECTED_VLANS = [int(vlan) for vlan in sys.argv[1:]] if len(sys.argv) > 1 else [11, 12, 13]
+# List of VLANs you intended to create (can also be passed as command-line arguments)
+if len(sys.argv) > 1:
+    EXPECTED_VLANS = [int(vlan) for vlan in sys.argv[1:]]
+else:
+    EXPECTED_VLANS = [11, 12, 13]
 
 class CommonSetup(aetest.CommonSetup):
-    """Setup Section: Connect to Devices"""
-
+    """Common Setup Section"""
     @aetest.subsection
     def connect_to_devices(self, testbed):
-        """Connect to all devices listed in the testbed."""
+        """Connect to all devices in the testbed."""
         self.parent.parameters["devices"] = {}
         for device_name, device in testbed.devices.items():
             try:
                 device.connect()
                 self.parent.parameters["devices"][device_name] = device
-                logger.info(banner(f"Successfully connected to {device_name}"))
+                logger.info(banner(f"Connected to {device_name}"))
             except ConnectionError as e:
-                self.failed(f"Failed to connect to {device_name}: {e}", goto=['common_cleanup'])
+                self.failed(f"Failed to connect to device {device_name}: {e}")
 
 class VLANVerificationTestcase(aetest.Testcase):
     """VLAN Verification Test Case"""
-
     @aetest.setup
     def setup(self, testbed):
-        """Set up the test case by connecting to 'leaf1' and loading VLAN data."""
+        """Connect to the device and load VLAN information"""
         self.device = testbed.devices.get("leaf1")
         if not self.device:
-            self.failed("Device 'leaf1' not found in the testbed configuration.", goto=['cleanup'])
+            self.failed("Device 'leaf1' not found in the testbed.")
         try:
-            self.device.connect()
+            # Use the generic 'show vlan' command instead of 'show vlan brief'
             self.vlan_data = self.device.parse("show vlan")
         except Exception as e:
-            self.failed(f"Failed to retrieve VLAN information from 'leaf1': {e}", goto=['cleanup'])
+            self.failed(f"Failed to parse VLAN information: {e}")
 
     @aetest.test
     def verify_vlans(self):
-        """Check if the expected VLANs are present in the device."""
+        """Verify that all the expected VLANs are present"""
         missing_vlans = []
         vlan_list = [int(vlan["vlan_id"]) for vlan in self.vlan_data["vlans"].values()]
         for vlan in EXPECTED_VLANS:
             if vlan not in vlan_list:
                 missing_vlans.append(vlan)
-        
-        assert not missing_vlans, f"Missing VLANs: {missing_vlans}"
+
+        assert len(missing_vlans) == 0, f"Missing VLANs: {missing_vlans}"
 
     @aetest.cleanup
     def cleanup(self):
-        """Cleanup by disconnecting the device."""
+        """Cleanup Section"""
         try:
-            if self.device.connected:
-                self.device.disconnect()
-                logger.info(banner(f"Disconnected from {self.device.name}"))
+            self.device.disconnect()
+            logger.info(banner(f"Disconnected from {self.device.name}"))
         except Exception as e:
-            logger.warning(f"Failed to disconnect from {self.device.name}: {e}")
+            logger.warning(f"Failed to disconnect device: {e}")
 
 class CommonCleanup(aetest.CommonCleanup):
     """Common Cleanup Section"""
-
     @aetest.subsection
     def disconnect_from_devices(self):
-        """Disconnect from all connected devices."""
+        """Disconnect from all devices."""
         devices = self.parent.parameters.get("devices", {})
-        for device in devices.values():
-            try:
-                if device.connected:
+        if devices:
+            for device in devices.values():
+                try:
                     device.disconnect()
                     logger.info(banner(f"Disconnected from {device.name}"))
-            except Exception as e:
-                logger.warning(f"Failed to disconnect from {device.name}: {e}")
+                except Exception as e:
+                    logger.warning(f"Failed to disconnect device {device.name}: {e}")
 
 if __name__ == "__main__":
     # Load the testbed file (YAML) to connect to the devices
-    try:
-        testbed = load("testbed.yaml")
-        aetest.main(testbed=testbed)
-    except Exception as e:
-        logger.error(f"Failed to load testbed or execute tests: {e}")
+    testbed = load("testbed.yaml")
+    aetest.main(testbed=testbed)
